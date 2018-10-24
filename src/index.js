@@ -41,6 +41,11 @@ function isContentTypeBinaryMimeType (params) {
 function mapApiGatewayEventToHttpRequest (event, context, socketPath) {
   const headers = Object.assign({}, event.headers)
 
+  // workaround to deal with gzip header issue  	
+  if (headers['Content-Encoding'] === 'gzip') {
+      headers['Content-Encoding']  = 'identity';
+  }
+
   // NOTE: API Gateway is not setting Content-Length header on requests even when they have a body
   if (event.body && !headers['Content-Length']) {
     const body = getEventBody(event)
